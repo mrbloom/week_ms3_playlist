@@ -12,3 +12,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+table{
+  width: 100%;
+  border: 1px solid black;
+}
+
+tr, th, td{
+  border: 1px solid black;
+}
+
+button{
+  height: 30px;
+}
