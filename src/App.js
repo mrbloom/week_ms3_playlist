@@ -19,18 +19,23 @@ function dateAdd(date, interval, units) {
   return ret;
 }
 
+function get_week_dates(day_date){
+  const monday = dateAdd(day_date, "day", 1-day_date.getDay());
+  let week_day_dates = [monday];
+  for (let i = 1; i < 7; i++){      
+    week_day_dates.push( dateAdd(monday, "day", i) );
+  }
+  return week_day_dates.map( day => day.toISOString().slice(0,10));
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
     const now = new Date();
-    const monday = dateAdd(now, "day", 1-now.getDay());
-    let week_day_dates = [monday];
-    for (let i = 1; i < 7; i++){      
-      week_day_dates.push( dateAdd(monday, "day", i) );
-    }
+    let week_day_dates = get_week_dates(now);
     this.state = {
       today_date : now.toISOString().slice(0,10),
-      week_day_dates : week_day_dates.map(day => day.toISOString().slice(0,10)),
+      week_day_dates : week_day_dates,
       days : ["Понеідлок","Вівторок","Середа","Четвер","П'ятниця","Субота","Неділя"] 
     };
   }
@@ -38,8 +43,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        Дата дня неділі:<DayDate date={this.state.today_date} />
-        <Week days={this.state.days}/>
+        Дата дня неділі:
+        <DayDate 
+          date={this.state.today_date}
+          // onChange = {}
+        />
+        Час початку ефірної доби:<Time time="06:00" />
+        <Week days={this.state.days} week_day_dates={this.state.week_day_dates} />
       </div>      
     );
   }
@@ -100,10 +110,15 @@ class DayDate extends Component{
 }
 
 class Time extends Component{
+  constructor(props) {
+    super(props);  
+    this.state = {time:props.time};
+  }
+
   render(){
     return(
       <div>
-        <input type="time" min="6:00" max="5:50" />
+        <input type="time" min="6:00" value={this.state.time} />
       </div>      
     );
   }  
@@ -113,23 +128,35 @@ class Row extends Component{
   
   constructor(props) {
     super(props);
-    this.state = {day:props.day};
-    this.state = {day_date:props.day_date};
+    
+    this.state = {
+      day:props.day,
+      day_date:props.day_date
+    };
+    
   }
 
   render(){
+    console.log(this.state.day);
     return(  
       <tr>    
-        <td>{this.state.day}<DayDate /></td>         
+        <td>{this.state.day}<DayDate date={this.state.day_date} /></td>         
         <td><input type="number" min="1" value="1" /></td>       
         <td><Time /></td>       
         <td><Time /></td>     
         <td><Time /></td>           
-        <td><Type /></td>  
-        <td><Series /></td>   
+        <td><Content /></td>          
       </tr>
     );
   }  
+}
+
+class Content extends Component{
+  render(){
+    return(     
+        <td><Type /><Series /></td>   
+    );
+  }
 }
 
 class Week extends Component{
@@ -142,12 +169,13 @@ class Week extends Component{
   }
 
   render(){
+    console.log(this.state.week_day_dates[0])
     return(  
       <table>
         <tr>
-          <th>День тиждня</th><th>№ блоку</th><th>Початок</th><th>Кінец</th><th>Тривалість</th><th>Тип</th><th>Контент</th>              
+          <th>День тиждня</th><th>№ блоку</th><th>Початок</th><th>Кінец</th><th>Тривалість</th><th>Контент</th>              
         </tr>
-        {this.state.days.map( (day) => <Row day={day} />)}          
+        {this.state.days.map( (day,i) => <Row day={day} day_date={this.state.week_day_dates[i]}  />)}
       </table>
     );
   }  
