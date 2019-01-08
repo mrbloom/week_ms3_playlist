@@ -28,17 +28,22 @@ function get_week_dates(day_date){
   return week_day_dates.map( day => day.toISOString().slice(0,10));
 }
 
+const now = new Date();
+const week_day_dates = get_week_dates(now);
+
 class App extends Component {
   constructor(props) {
     super(props);
-    const now = new Date();
-    let week_day_dates = get_week_dates(now);
+
     this.state = {
       today_date : now.toISOString().slice(0,10),
       week_day_dates : week_day_dates,
       days : ["Понеідлок","Вівторок","Середа","Четвер","П'ятниця","Субота","Неділя"] 
     };
+
+    this.onDateChanged = this.onDateChanged.bind(this);
   }
+
 
   render() {
     return (
@@ -46,7 +51,6 @@ class App extends Component {
         Дата дня неділі:
         <DayDate 
           date={this.state.today_date}
-          // onChange = {}
         />
         Час початку ефірної доби:<Time time="06:00" />
         <Week days={this.state.days} week_day_dates={this.state.week_day_dates} />
@@ -95,6 +99,13 @@ class DayDate extends Component{
   constructor(props) {
     super(props);
     this.state = {date:props.date};
+
+    this.onDateChanged = this.onDateChanged.bind(this);
+  }
+
+  onDateChanged(event){
+    this.setState({date:event.target.value});
+            // alert(event.target.value);          
   }
 
   render(){
@@ -103,7 +114,8 @@ class DayDate extends Component{
         <input 
           type="date" 
           value={this.state.date}
-          onChange={event => this.setState({date:event.target.value})} />
+          onChange={this.onDateChanged}
+        />
       </div>      
     );
   }  
