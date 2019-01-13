@@ -44,6 +44,13 @@ class App extends Component {
     this.onDateChanged = this.onDateChanged.bind(this);
   }
 
+  onDateChanged(event) {
+   event.preventDefault();
+   const dt = event.target.value;
+   alert(dt + "!!!");    
+   console.log(dt)
+  }
+
 
   render() {
     return (
@@ -51,9 +58,14 @@ class App extends Component {
         Дата дня неділі:
         <DayDate 
           date={this.state.today_date}
+          onChange = {this.onDateChanged}
+          onClick = {(e) => alert("eeeee")}
         />
         Час початку ефірної доби:<Time time="06:00" />
-        <Week days={this.state.days} week_day_dates={this.state.week_day_dates} />
+        <Week 
+          days={this.state.days} 
+          week_day_dates={this.state.week_day_dates} 
+        />
       </div>      
     );
   }
@@ -105,7 +117,7 @@ class DayDate extends Component{
 
   onDateChanged(event){
     this.setState({date:event.target.value});
-            // alert(event.target.value);          
+            alert(event.target.value);          
   }
 
   render(){
@@ -114,7 +126,7 @@ class DayDate extends Component{
         <input 
           type="date" 
           value={this.state.date}
-          onChange={this.onDateChanged}
+          // onChange={this.onDateChanged}
         />
       </div>      
     );
