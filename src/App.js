@@ -98,8 +98,7 @@ class Series extends Component{
           <option value="Вечірка">Вечірка</option>
         </select>    
         <input type="number" min="1" />  
-        <input type="number" min="1" />
-        <button>+</button>
+        <input type="number" min="1" />        
       </div>
      ); 
   }
@@ -170,7 +169,8 @@ class Row extends Component{
     
     this.state = {
       day:props.day,
-      day_date:props.day_date
+      day_date:props.day_date,
+      blocks_num:1
     };
     
   }
@@ -178,22 +178,61 @@ class Row extends Component{
   render(){
     console.log(this.state.day);
     return(  
-      <tr>    
-        <td>{this.state.day}<DayDate date={this.state.day_date} editable={false}/></td>         
-        <td><input type="number" min="1" value="1" /></td>       
-        <td><Time /></td>       
-        <td><Time /></td>     
-        <td><Time /></td>           
-        <td><Content /></td>          
-      </tr>
+      
+          <tr>
+            <td>{this.state.day}<DayDate date={this.state.day_date} editable={false}/></td>                   
+            <td>
+              <input type="number" min="1" value={this.state.blocks_num} />
+            </td>       
+            <td><Time /></td>       
+            <td><Time /></td>     
+            <td><Time /></td>           
+            <td><Content /></td>    
+          </tr>
+
+        
+      
     );
   }  
 }
 
 class Content extends Component{
+  constructor(props){
+    super(props);
+    
+    this.default_block = (<div><Type /><Series /></div>);
+    this.state = {      
+      blocks:[ this.default_block ]
+    };
+    
+  }
   render(){
-    return(     
-        <td><Type /><Series /></td>   
+    const {blocks,blocks_num} = this.state;
+    return(    
+        <div>
+          <td> 
+            {              
+              // <div><Type /><Series /></div>
+              blocks.map( function (el) {return (el)} )
+            }
+          </td>
+          <button
+            onClick={              
+              ()=>{
+                const el = (this.default_block)
+                this.setState({blocks:blocks.concat(el)})
+              }
+            }
+          >+</button>   
+          <button
+            onClick={              
+              ()=>{                
+                this.setState({blocks:blocks.slice(0,-1)})
+                this.setState({blocks_num:blocks_num-1})
+              }
+            }
+          >-</button>  
+        </div>
     );
   }
 }
