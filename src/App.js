@@ -38,7 +38,6 @@ class App extends Component {
     this.state = {
       today_date : now.toISOString().slice(0,10),
       week_day_dates : week_day_dates,
-      days : ["Понеідлок","Вівторок","Середа","Четвер","П'ятниця","Субота","Неділя"] 
     };
 
     this.onDateChanged = this.onDateChanged.bind(this);
@@ -53,18 +52,31 @@ class App extends Component {
 
 
   render() {
+    const app_this = this;
     return (
       <div className="App">
         Дата дня неділі:
         <DayDate 
           date={this.state.today_date}
-          onChange = {this.onDateChanged}
-          onClick = {(e) => alert("eeeee")}
+          editable={true}
+          onChange = {(e)=>{
+            // e.preventDefault();
+              const dt = e.target.value;
+              const new_dates = get_week_dates(new Date(dt));
+              console.log(new_dates);
+              app_this.setState({
+                week_day_dates:new_dates,
+                today_date:dt
+              });
+            }
+          }
+          // onClick = {(e) => alert("eeeee")}
         />
         Час початку ефірної доби:<Time time="06:00" />
         <Week 
-          days={this.state.days} 
+          days={this.props.days} 
           week_day_dates={this.state.week_day_dates} 
+          key={this.state.today_date}
         />
       </div>      
     );
@@ -116,8 +128,10 @@ class DayDate extends Component{
   }
 
   onDateChanged(event){
+    // if(this.props.editable)
     this.setState({date:event.target.value});
-            alert(event.target.value);          
+    this.props.onChange(event);
+    alert(event.target.value);          
   }
 
   render(){
@@ -126,7 +140,8 @@ class DayDate extends Component{
         <input 
           type="date" 
           value={this.state.date}
-          // onChange={this.onDateChanged}
+          onChange={this.onDateChanged}
+          readOnly={!this.props.editable}          
         />
       </div>      
     );
@@ -164,7 +179,7 @@ class Row extends Component{
     console.log(this.state.day);
     return(  
       <tr>    
-        <td>{this.state.day}<DayDate date={this.state.day_date} /></td>         
+        <td>{this.state.day}<DayDate date={this.state.day_date} editable={false}/></td>         
         <td><input type="number" min="1" value="1" /></td>       
         <td><Time /></td>       
         <td><Time /></td>     
