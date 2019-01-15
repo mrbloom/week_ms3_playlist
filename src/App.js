@@ -166,34 +166,59 @@ class Row extends Component{
   
   constructor(props) {
     super(props);
-    
+
     this.state = {
       day:props.day,
       day_date:props.day_date,
-      blocks_num:1
+      blocks_num:1,
+      blocks: [(<Block block_num="1" />)]
     };
     
   }
 
   render(){
     console.log(this.state.day);
-    return(  
-      
-          <tr>
-            <td>{this.state.day}<DayDate date={this.state.day_date} editable={false}/></td>                   
-            <td>
-              <input type="number" min="1" value={this.state.blocks_num} />
-            </td>       
-            <td><Time /></td>       
-            <td><Time /></td>     
-            <td><Time /></td>           
-            <td><Content /></td>    
-          </tr>
+    const {blocks_num,blocks} = this.state;
+    return(       
+          <div style={{display: 'flex'}}> 
+            <div>{this.state.day}<DayDate date={this.state.day_date} editable={false}/></div>   
+            <div style={{display:"block"}}>{this.state.blocks}</div>
+            <button
+              onClick={
+                ()=>{
+                  this.setState({blocks_num: blocks_num+1});
+                  this.setState({blocks:blocks.concat(<Block block_num={blocks_num+1} />)});
 
-        
-      
+                }
+              }
+            >+</button>
+            <button
+              onClick={
+                ()=>{
+                  this.setState({blocks_num: blocks_num-1});
+                  this.setState({blocks:blocks.slice(0,-1)});                 
+                }
+              }
+            >-</button>
+          </div>     
     );
   }  
+}
+
+class Block extends Component{
+  render(){
+    return(
+      <div style={{display: 'flex'}}>
+        <div>
+          <input type="number" min="1" value={this.props.block_num} />
+        </div>       
+        <div><Time /></div>       
+        <div><Time /></div>     
+        <div><Time /></div>           
+        <div><Content /></div>    
+      </div>
+    );
+  }
 }
 
 class Content extends Component{
@@ -210,12 +235,12 @@ class Content extends Component{
     const {blocks,blocks_num} = this.state;
     return(    
         <div>
-          <td> 
+          <div> 
             {              
               // <div><Type /><Series /></div>
               blocks.map( function (el) {return (el)} )
             }
-          </td>
+          </div>
           <button
             onClick={              
               ()=>{
@@ -249,12 +274,12 @@ class Week extends Component{
   render(){
     console.log(this.state.week_day_dates[0])
     return(  
-      <table>
-        <tr>
-          <th>День тиждня</th><th>№ блоку</th><th>Початок</th><th>Кінец</th><th>Тривалість</th><th>Контент</th>              
-        </tr>
+      <div>
+        <div style={{display: 'flex'}}>
+          <div>День тиждня</div><div>№ блоку</div><div>Початок</div><div>Кінец</div><div>Тривалість</div><div>Контент</div>              
+        </div>
         {this.state.days.map( (day,i) => <Row day={day} day_date={this.state.week_day_dates[i]}  />)}
-      </table>
+      </div>
     );
   }  
 }
